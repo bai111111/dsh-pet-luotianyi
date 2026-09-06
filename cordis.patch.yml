@@ -1,0 +1,7 @@
+# dsh-pet-luotianyi bundle patch (required by the dsh.bundle manifest for
+# profile bundle assembly). Loads the single plugin entry: the loader resolves
+# `name` to this package's main.
+- insert:
+    - id: dsh-pet-luotianyi
+      name: dsh-pet-luotianyi
+      config: {}

@@ -1,0 +1,40 @@
+{
+  "name": "dsh-pet-luotianyi",
+  "version": "1.0.0",
+  "description": "洛天依桌宠：住在 DSH 里的虚拟歌姬，可拖动、可互动（抚摸/喂食/睡觉/聊天），预设动作 + 接大模型的 AI 聊天。",
+  "type": "module",
+  "main": "./lib/pet-host.js",
+  "exports": {
+    ".": { "default": "./lib/pet-host.js" },
+    "./client": { "default": "./lib/client.js" },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "lib/pet-host.js",
+    "lib/client.js",
+    "assets",
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "desktop-pet",
+    "mascot",
+    "luotianyi",
+    "洛天依",
+    "virtual-singer"
+  ],
+  "license": "MIT",
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    },
+    "client": {
+      "inject": ["@deepseek-ai/dsh-client-runtime", "@deepseek-ai/dsh-client-ui-slots"],
+      "platform": "web"
+    }
+  }
+}
