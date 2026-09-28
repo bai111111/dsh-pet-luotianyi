@@ -1,6 +1,30 @@
 # 更新日志
 
-> 从 GitHub 上的 v1.0.0 以来，桌宠一共经历了 5 次更新。下面是每个版本的变更，以及新功能的完整使用说明。
+> 从 GitHub 上的 v1.0.0 以来，桌宠一共经历了 6 次更新。下面是每个版本的变更，以及新功能的完整使用说明。
+
+---
+
+## v1.3.3 — 修复：选择「精细」抠图档位报错
+
+### 🐛 修复
+- **换图面板点「精细」就报错**：
+
+  ```
+  Resource /models/large not found.
+  Ensure that the config.publicPath is configured correctly.
+  ```
+
+  原因：本地安装的抠图引擎（`@imgly/background-removal-node`）的 `resources.json`
+  **只自带 `small` / `medium` 两个模型**（实测 small 约 44MB、medium 约 88MB，没有 large），
+  而换图面板却给了「精细(large)」这个选项——一点就必然失败。
+
+  修复：
+  - 宿主读取引擎的 `resources.json`，通过 `GET /state` 上报**实际可用的档位**；
+  - 换图面板**只显示引擎真正带的档位**（本机即「快 / 标准」两项，「精细」不再出现）；
+  - 服务端兜底：万一仍请求了不存在的档位，**自动降级到可用档位并在面板上说明**，不再抛错；
+  - 抠图结果里带上 `model` / `modelFallback` / `availableModels`，便于排查。
+
+  实测：请求 `large` 时返回 `ok:true, effectiveModel:"medium", fallback:true`，不再报错。
 
 ---
 
