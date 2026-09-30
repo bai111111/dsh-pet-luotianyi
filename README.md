@@ -78,6 +78,19 @@ npm install @imgly/background-removal-node
 
 也可以把它装在别处，然后在插件配置里用 `engineDir` 指过去；引擎缺失时，换图面板会直接提示安装命令。
 
+### 3. 装精细档模型（可选，约 490MB）
+
+「精细」档位使用 **BRIA RMBG-2.0**（比引擎自带的 small/medium 更强，官方数据源根本不提供 large 模型，所以单独提供）。装好后换图面板才会出现「精细」选项：
+
+```bash
+cd <插件目录>
+node scripts/fetch-fine-model.mjs
+```
+
+脚本会依次尝试 HuggingFace / hf-mirror / ModelScope 镜像，并把模型放进
+`{DSH_HOME}/dsh-pet-luotianyi/models/rmbg-2.0.onnx`（约 490MB，一次下载永久离线可用）。
+本机实测：精细档单次抠图约 28 秒（在独立子进程里跑，不会卡住或拖垮 DSH）。
+
 ## 🎮 使用
 
 1. 刷新 DSH 页面，右下角出现洛天依（可拖动）。

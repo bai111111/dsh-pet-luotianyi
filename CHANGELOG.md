@@ -1,6 +1,31 @@
 # 更新日志
 
-> 从 GitHub 上的 v1.0.0 以来，桌宠一共经历了 8 次更新。下面是每个版本的变更，以及新功能的完整使用说明。
+> 从 GitHub 上的 v1.0.0 以来，桌宠一共经历了 9 次更新。下面是每个版本的变更，以及新功能的完整使用说明。
+
+---
+
+## v1.4.0 — 新增：精细抠图档位（BRIA RMBG-2.0）
+
+### ✨ 新增
+- **「精细(large)」档位回来了**，而且这次是**真·大模型**：
+  - 查证结果：`@imgly/background-removal-node` **所有版本（含最新 1.4.5）的官方数据源都不提供 large 模型**——该档位是枚举占位、从未发布数据（v1.3.3 曾因此报 `Resource /models/large not found`）。
+  - 现在精细档改由 **BRIA RMBG-2.0（BiRefNet，目前最强的开源抠图模型之一）** 支撑：本机推理、离线可用，走引擎自带的 onnxruntime。
+  - 模型为 **fp16 版（约 490MB）**，存放在 `{DSH_HOME}/dsh-pet-luotianyi/models/rmbg-2.0.onnx`；宿主通过 `GET /state` 动态上报可用档位——**模型文件存在时「精细」才出现**，不存在则自动隐藏并降级，绝不会再报错。
+- 新增 **`scripts/fetch-fine-model.mjs`**：一键下载模型（依次尝试 HuggingFace / hf-mirror / ModelScope 镜像），并自动把新导出器的 **ONNX IR 10 头改写为 IR 9**（引擎捆绑的 onnxruntime 1.17 最高只认 IR 9）。安装：`node scripts/fetch-fine-model.mjs`。
+- 抠图结果附带实际使用的模型与降级标记，便于排查。
+
+### 📐 三档位对照
+| 档位 | 引擎 | 模型 | 速度（本机实测） |
+|---|---|---|---|
+| 快 small | imgly isnet-small | 44MB | ~2s |
+| 标准 medium | imgly isnet-medium | 88MB | ~2s |
+| **精细 large** | **BRIA RMBG-2.0 fp16** | **490MB** | **~28s**（独立子进程，不影响 DSH） |
+
+精细档质量实测（同一张洛天依图）：人物完整、发丝边缘干净，视觉评分 **9.5/10**。
+
+### 🔧 技术备注
+- 精细推理在**一次性子进程**里跑（同快/标准档），峰值内存不会进宿主进程。
+- 途中排掉的两个坑已内建规避：imgly 引擎捆绑的 ORT 1.17 不支持 int8 模型的 `ConvInteger`（故弃 int8 用 fp16）；`sharp.resize()` 对单通道 raw 输出 3 通道需强制 `toColourspace('b-w')`，否则 alpha 会错位。
 
 ---
 
